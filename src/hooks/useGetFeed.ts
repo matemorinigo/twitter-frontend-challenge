@@ -14,19 +14,36 @@ export const useGetFeed = () => {
   const service = useHttpRequestService();
 
   useEffect(() => {
-    try {
-      setLoading(true);
-      setError(false);
-      service.getPosts(query).then((res) => {
-        const updatedPosts = Array.from(new Set([...posts, ...res]));
+
+    const fetchPosts = async () => {
+      try {
+        setLoading(true);
+        setError(false);
+        const res = await service.getPosts(query);
+
+        const updatedPosts = await Promise.all(Array.from(new Set([...posts, ...res])).map(async post => {
+          const reactions = await service.getReactionsByPostId(post.id, "ALL");
+          const comments = await service.getCommentsByPostId(post.id);
+
+          return {
+            ...post,
+            reactions,
+            comments
+          }
+        }));
         dispatch(updateFeed(updatedPosts));
         dispatch(setLength(updatedPosts.length));
         setLoading(false);
-      });
-    } catch (e) {
-      setError(true);
-      console.log(e);
+
+      } catch (e) {
+        setError(true);
+        console.log(e);
+      }
     }
+
+    fetchPosts();
+
+
   }, [query]);
 
   return { posts, loading, error };

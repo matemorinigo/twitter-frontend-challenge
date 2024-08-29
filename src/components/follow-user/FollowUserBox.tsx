@@ -27,13 +27,17 @@ const FollowUserBox = ({
 
   useEffect(() => {
     handleGetUser().then(r => {
+      
       setUser(r)
       setIsFollowing(r?.following.some((f: Author) => f.id === id))
     })
   }, []);
 
   const handleGetUser = async () => {
-    return await service.me()
+    return {
+      ...await service.me(),
+      following: await service.getFollowing()
+    }
   }
 
   const [isFollowing, setIsFollowing] = useState(false);

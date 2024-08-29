@@ -320,7 +320,7 @@ const httpRequestService = {
     }
   },
   getCommentsByPostId: async (id: string) => {
-    const res = await axios.get(`${url}/post/comment/by_post/${id}`, {
+    const res = await axios.get(`${url}/comments/${id}`, {
       headers: {
         Authorization: localStorage.getItem("token"),
       },
@@ -328,6 +328,36 @@ const httpRequestService = {
     if (res.status === 200) {
       return res.data;
     }
+  },
+  getReactionsByPostId: async (id: string, type: string) => {
+    const res = await axios.get(`${url}/reaction/${id}`, {
+      headers: {
+        Authorization: localStorage.getItem("token"),
+      },
+      params: {
+        type
+      }
+    });
+    if (res.status === 200) {
+      return res.data;
+    }
+  },
+  getFollowing: async () => {
+    const res = await axios.get(`${url}/follower/following`, {
+      headers: {
+        Authorization: localStorage.getItem("token"),
+      }
+    });
+    if (res.status === 200) {
+      return res.data;
+    }
+  },
+  isAuthenticated: async () => {
+    return await axios.get(`${url}/auth/validate_token`, {
+      headers: {
+        Authorization: localStorage.getItem("token"),
+      }
+    }).then(r => true).catch(e => false);
   },
 };
 

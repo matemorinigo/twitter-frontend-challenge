@@ -19,7 +19,13 @@ export const useGetProfilePosts = () => {
     service
       .getPostsFromProfile(id)
       .then((res) => {
-        const updatedPosts = Array.from(new Set([...posts, ...res])).filter(
+        const combinedPosts = Array.from(new Set([...posts, ...res])).map(post => {
+          return {
+            ...post,
+            reactions: service.getReactionsByPostId(post.id, "ALL"),
+            comments: service.getCommentsByPostId(post.id)
+        }})
+        const updatedPosts = combinedPosts.filter(
           (post) => post.authorId === id
         );
         dispatch(updateFeed(updatedPosts));

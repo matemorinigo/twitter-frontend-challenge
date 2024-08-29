@@ -13,14 +13,19 @@ import {StyledContainer} from "../common/Container";
 import {StyledButtonContainer} from "./ButtonContainer";
 import {useDispatch, useSelector} from "react-redux";
 import {User} from "../../service";
+import { RootState } from "../../redux/store";
+
+interface TweetBoxProps {
+
+}
 
 const TweetBox = (props) => {
     const {parentId, close, mobile} = props;
     const [content, setContent] = useState("");
-    const [images, setImages] = useState([]);
+    const [images, setImages] = useState<string[]>([]);
     const [imagesPreview, setImagesPreview] = useState([]);
 
-    const {length, query} = useSelector((state) => state.user);
+    const {length, query} = useSelector((state: RootState) => state.user);
     const httpService = useHttpRequestService();
     const dispatch = useDispatch();
     const {t} = useTranslation();
@@ -60,7 +65,7 @@ const TweetBox = (props) => {
         setImagesPreview(newImagesPreview);
     };
 
-    const handleAddImage = (newImages) => {
+    const handleAddImage = (newImages: File[]) => {
         setImages(newImages);
         const newImagesPreview = newImages.map((i) => URL.createObjectURL(i));
         setImagesPreview(newImagesPreview);
