@@ -18,17 +18,8 @@ const HomePage = () => {
   const handleSetUser = async () => {
     try {
       const data = await service.getPosts(query);
-      const updatedPosts = await Promise.all(data.map(async (post: Post) => {
-        const reactions = await service.getReactionsByPostId(post.id, "ALL");
-        const comments = await service.getCommentsByPostId(post.id);
-        const completePost = {
-          ...post,
-          reactions: reactions || [],
-          comments: comments || []
-        }
-        return completePost
-      }));
-      dispatch(updateFeed(updatedPosts));
+      console.log(data)
+      dispatch(updateFeed(data));
     } catch (e) {
       navigate("/sign-in");
     }

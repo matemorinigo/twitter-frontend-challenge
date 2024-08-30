@@ -23,33 +23,12 @@ const Tweet = ({post}: TweetProps) => {
   const service = useHttpRequestService();
   const [actualPost, setActualPost] = useState<Post>(post);
   const navigate = useNavigate();
-  const [user, setUser] = useState<User>()
+  const [user, setUser] = useState<User>();
   
-  const fetchPost = async () => {
-    service
-      .getPostById(post.id)
-      .then(async (res) => {
-        const reactions = await service.getReactionsByPostId(res.id, "ALL")
-        const comments = await service.getCommentsByPostId(res.id)
-        setActualPost({
-          ...res,
-          reactions,
-          comments
-        });
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  }
-
   useEffect(() => {
-    fetchPost()
     handleGetUser().then(r => setUser(r))
-  }, [])
 
-  useEffect(() => {
-    fetchPost()
-  }, [post])
+  }, [])
 
 
   const handleGetUser = async () => {
@@ -60,7 +39,7 @@ const Tweet = ({post}: TweetProps) => {
     return null
 
   const getCountByType = (type: string): number => {
-    return actualPost.reactions?.filter((r) => r.type === type).length ?? 0;
+    return actualPost.reactions.filter((r) => r.type === type).length ?? 0;
   };
 
   const handleReaction = async (type: string) => {
@@ -69,23 +48,22 @@ const Tweet = ({post}: TweetProps) => {
     );
     if (reacted) {
       await service.deleteReaction(reacted.postId, type);
+  
     } else {
       await service.createReaction(actualPost.id, type);
+
     }
     const newPost = await service.getPostById(post.id);
-    setActualPost({
-      ...newPost,
-      reactions: await service.getReactionsByPostId(post.id, "ALL"),
-      comments: await service.getCommentsByPostId(post.id)
-    });
+    setActualPost(newPost);
   };
 
-
   const hasReactedByType = (type: string): boolean => {
+    
     return actualPost.reactions && actualPost.reactions.some(
         (r) => r.type === type && r.userId === user?.id
     );
   };
+
 
   return (
       <StyledTweetContainer>

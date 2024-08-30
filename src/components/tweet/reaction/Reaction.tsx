@@ -1,7 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Icon, IconType } from "../../icon/Icon";
 import { StyledReactionContainer } from "./ReactionContainer";
-
 interface ReactionProps {
   img: IconType;
   count: number;
@@ -18,6 +17,12 @@ const Reaction = ({
 }: ReactionProps) => {
   const [reactionCount, setReactionCount] = useState(count);
   const [reactionReacted, setReactionReacted] = useState(reacted);
+
+
+  useEffect(() => {
+    setReactionCount(count);
+    setReactionReacted(reacted);
+  },[reacted, count])
 
   const handleReaction = async () => {
     try {

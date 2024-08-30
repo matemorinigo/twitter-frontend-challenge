@@ -21,21 +21,9 @@ export const useGetFeed = () => {
         setLoading(true);
         setError(false);
         const res = await service.getPosts(query);
- 
-        const updatedPosts = await Promise.all(Array.from(new Set([...posts, ...res])).map(async post => {
-          const reactions = await service.getReactionsByPostId(post.id, "ALL");
-          const comments = await service.getCommentsByPostId(post.id);
-          const completePost = {
-            ...post,
-            reactions: reactions || [],
-            comments: comments || []
-          }
-          return completePost
-        }));
 
-        console.log(updatedPosts)
-        dispatch(updateFeed(updatedPosts));
-        dispatch(setLength(updatedPosts.length));
+        dispatch(updateFeed(res));
+        dispatch(setLength(res.length));
         setLoading(false);
 
       } catch (e) {
