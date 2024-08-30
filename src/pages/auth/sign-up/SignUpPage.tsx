@@ -10,6 +10,7 @@ import Button from "../../../components/button/Button";
 import { ButtonType } from "../../../components/button/StyledButton";
 import { StyledH3 } from "../../../components/common/text";
 
+
 interface SignUpData {
   name: string;
   username: string;
@@ -25,6 +26,7 @@ const SignUpPage = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
 
+
   const handleChange =
     (prop: string) => (event: ChangeEvent<HTMLInputElement>) => {
       setData({ ...data, [prop]: event.target.value });
@@ -33,7 +35,9 @@ const SignUpPage = () => {
     const { confirmPassword, ...requestData } = data;
     httpRequestService
       .signUp(requestData)
-      .then(() => navigate("/"))
+      .then(() => {
+        navigate("/")
+      })
       .catch(() => setError(false));
   };
 

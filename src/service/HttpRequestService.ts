@@ -107,11 +107,14 @@ const httpRequestService = {
       return res.data;
     }
   },
-  deleteReaction: async (reactionId: string) => {
+  deleteReaction: async (reactionId: string, type: string) => {
     const res = await axios.delete(`${url}/reaction/${reactionId}`, {
       headers: {
         Authorization: localStorage.getItem("token"),
       },
+      data: {
+        type,
+      }
     });
     if (res.status === 200) {
       return res.data;
@@ -357,7 +360,7 @@ const httpRequestService = {
       headers: {
         Authorization: localStorage.getItem("token"),
       }
-    }).then(r => true).catch(e => false);
+    }).then(r=>true).catch(e=>false)
   },
 };
 

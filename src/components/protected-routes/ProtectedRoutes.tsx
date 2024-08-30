@@ -1,25 +1,28 @@
 import { useEffect, useState } from "react"
-import { Navigate, Outlet } from "react-router-dom"
+import { Navigate, Outlet, useActionData } from "react-router-dom"
 import { useHttpRequestService } from "../../service/HttpRequestService"
 
 
 const ProtectedRoutes = () => {
-    const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false)
+    
+    const [isAuthenticated, setIsAuthenticated] = useState(false)
+    const [isLoading, setIsLoading] = useState(true)
     const service = useHttpRequestService()
 
     useEffect(()=>{
-        const checkAuth = async () => {
-            const isAuth = await service.isAuthenticated()
-            setIsAuthenticated(isAuth)
+        setIsLoading(true)
+        const fetchAuth = async () => {
+            setIsAuthenticated(await service.isAuthenticated())
+            setIsLoading(false)
         }
 
-        checkAuth()
+        fetchAuth()
     }, [])
-
 
     return (
         <>
-            {isAuthenticated ? <Outlet /> : <Navigate to='/sign-in' />}
+            {(isAuthenticated && !isLoading) && <Outlet />}
+            {(!isAuthenticated && !isLoading) && <Navigate to='/sign-in' />}
         </>
     )
 }

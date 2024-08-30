@@ -48,6 +48,7 @@ const LogoutPrompt = ({ show }: LogoutPromptProps) => {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
+    
     navigate("/sign-in");
   };
 

@@ -16,23 +16,23 @@ import {User} from "../../service";
 import { RootState } from "../../redux/store";
 
 interface TweetBoxProps {
-
+    parentId?: string
+    close?: ()=>void
+    mobile?: boolean
+    borderless?: boolean
 }
 
-const TweetBox = (props) => {
-    const {parentId, close, mobile} = props;
+const TweetBox = ({parentId, close, mobile}: TweetBoxProps) => {
     const [content, setContent] = useState("");
-    const [images, setImages] = useState<string[]>([]);
-    const [imagesPreview, setImagesPreview] = useState([]);
+    const [images, setImages] = useState<File[]>([]);
+    const [imagesPreview, setImagesPreview] = useState<string[]>([]);
 
-    const {length, query} = useSelector((state: RootState) => state.user);
-    const httpService = useHttpRequestService();
+    const {length, query} = useSelector((state: RootState) => state.user)
     const dispatch = useDispatch();
     const {t} = useTranslation();
     const service = useHttpRequestService()
-    const [user, setUser] = useState()
-
-
+    const [user, setUser] = useState<User>()
+ 
     useEffect(() => {
         handleGetUser().then(r => setUser(r))
     }, []);
@@ -41,7 +41,7 @@ const TweetBox = (props) => {
         return await service.me()
     }
 
-    const handleChange = (e) => {
+    const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         setContent(e.target.value);
     };
     const handleSubmit = async () => {
@@ -50,7 +50,7 @@ const TweetBox = (props) => {
             setImages([]);
             setImagesPreview([]);
             dispatch(setLength(length + 1));
-            const posts = await httpService.getPosts(length + 1, "", query);
+            const posts = await service.getPosts(query);
             dispatch(updateFeed(posts));
             close && close();
         } catch (e) {
@@ -58,7 +58,7 @@ const TweetBox = (props) => {
         }
     };
 
-    const handleRemoveImage = (index) => {
+    const handleRemoveImage = (index: number) => {
         const newImages = images.filter((i, idx) => idx !== index);
         const newImagesPreview = newImages.map((i) => URL.createObjectURL(i));
         setImages(newImages);

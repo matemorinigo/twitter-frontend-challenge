@@ -9,6 +9,7 @@ import Button from "../../../components/button/Button";
 import { ButtonType } from "../../../components/button/StyledButton";
 import { StyledH3 } from "../../../components/common/text";
 
+
 const SignInPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -21,7 +22,9 @@ const SignInPage = () => {
   const handleSubmit = () => {
     httpRequestService
       .signIn({ email, password })
-      .then(() => navigate("/"))
+      .then(() => {
+        navigate('/')
+      })
       .catch(() => setError(true));
   };
 

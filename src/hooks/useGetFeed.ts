@@ -3,6 +3,7 @@ import { useHttpRequestService } from "../service/HttpRequestService";
 import { setLength, updateFeed } from "../redux/user";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 
+
 export const useGetFeed = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
@@ -20,17 +21,19 @@ export const useGetFeed = () => {
         setLoading(true);
         setError(false);
         const res = await service.getPosts(query);
-
+ 
         const updatedPosts = await Promise.all(Array.from(new Set([...posts, ...res])).map(async post => {
           const reactions = await service.getReactionsByPostId(post.id, "ALL");
           const comments = await service.getCommentsByPostId(post.id);
-
-          return {
+          const completePost = {
             ...post,
-            reactions,
-            comments
+            reactions: reactions || [],
+            comments: comments || []
           }
+          return completePost
         }));
+
+        console.log(updatedPosts)
         dispatch(updateFeed(updatedPosts));
         dispatch(setLength(updatedPosts.length));
         setLoading(false);

@@ -19,8 +19,14 @@ const PostPage = () => {
   const fetchPost = async () => {
     service
       .getPostById(postId)
-      .then((res) => {
-        setPost(res);
+      .then(async (res) => {
+        const reactions = await service.getReactionsByPostId(res.id, "ALL")
+        const comments = await service.getCommentsByPostId(res.id)
+        setPost({
+          ...res,
+          reactions,
+          comments
+        });
       })
       .catch((e) => {
         console.log(e);

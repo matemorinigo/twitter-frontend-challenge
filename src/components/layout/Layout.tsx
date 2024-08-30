@@ -10,6 +10,7 @@ import { store } from "../../redux/store";
 import { LightTheme } from "../../util/LightTheme";
 import { ROUTER } from "./Router";
 
+
 i18next.use(initReactI18next).init({
   interpolation: { escapeValue: false },
   lng: "en",
@@ -29,7 +30,7 @@ export const Layout = () => {
     <I18nextProvider i18n={i18next}>
       <Provider store={store}>
         <ThemeProvider theme={LightTheme}>
-          <RouterProvider router={ROUTER} />
+            <RouterProvider router={ROUTER} />
         </ThemeProvider>
       </Provider>
     </I18nextProvider>
