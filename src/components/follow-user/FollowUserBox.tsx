@@ -5,7 +5,8 @@ import UserDataBox from "../user-data-box/UserDataBox";
 import {useTranslation} from "react-i18next";
 import {ButtonType} from "../button/StyledButton";
 import "./FollowUserBox.css";
-import {Author, User} from "../../service";
+import {Author, Follow, User} from "../../service";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 interface FollowUserBoxProps {
   profilePicture?: string;
@@ -22,33 +23,47 @@ const FollowUserBox = ({
                        }: FollowUserBoxProps) => {
   const {t} = useTranslation();
   const service = useHttpRequestService()
-  const [user, setUser] = useState<User>()
+  const queryClient = useQueryClient()
+  const [isFollowing, setIsFollowing] = useState<boolean>();
+
+  const followingQuery = useQuery({
+    queryKey: ["following"],
+    queryFn: () => service.getFollowing()
+  })
+
+  const followMutation = useMutation({
+    mutationKey: ["follow", id],
+    mutationFn: () => service.followUser(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["following"]
+      })
+      setIsFollowing(true)
+    }
+  })
+
+  const unfollowMutation = useMutation({
+    mutationKey: ["unfollow", id],
+    mutationFn: () => service.unfollowUser(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["following"]
+      })
+      setIsFollowing(false)
+    }
+  })
 
 
   useEffect(() => {
-    handleGetUser().then(r => {
-      
-      setUser(r)
-      setIsFollowing(r?.following.some((f: Author) => f.id === id))
-    })
-  }, []);
-
-  const handleGetUser = async () => {
-    return {
-      ...await service.me(),
-      following: await service.getFollowing()
-    }
-  }
-
-  const [isFollowing, setIsFollowing] = useState(false);
+    setIsFollowing(followingQuery.data?.some((follow: Follow) => follow.followedId === id))
+  }, [followingQuery, followingQuery.data, followingQuery.status]);
 
   const handleFollow = async () => {
     if (isFollowing) {
-      await service.unfollowUser(id);
+      unfollowMutation.mutate()
     } else {
-      await service.followUser(id);
+      followMutation.mutate()
     }
-    setIsFollowing(!isFollowing);
   };
 
   return (

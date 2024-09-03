@@ -9,6 +9,9 @@ import global_es from "../../translations/es/global.json";
 import { store } from "../../redux/store";
 import { LightTheme } from "../../util/LightTheme";
 import { ROUTER } from "./Router";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+const queryClient = new QueryClient()
 
 
 i18next.use(initReactI18next).init({
@@ -30,7 +33,9 @@ export const Layout = () => {
     <I18nextProvider i18n={i18next}>
       <Provider store={store}>
         <ThemeProvider theme={LightTheme}>
+          <QueryClientProvider client={queryClient}>
             <RouterProvider router={ROUTER} />
+          </QueryClientProvider>
         </ThemeProvider>
       </Provider>
     </I18nextProvider>

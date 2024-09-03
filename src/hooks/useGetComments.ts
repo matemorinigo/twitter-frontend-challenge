@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useHttpRequestService } from "../service/HttpRequestService";
 import { setLength, updateFeed } from "../redux/user";
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
+import { useQuery } from "@tanstack/react-query";
 
 interface UseGetCommentsProps {
   postId: string;
@@ -16,23 +17,17 @@ export const useGetComments = ({ postId }: UseGetCommentsProps) => {
 
   const service = useHttpRequestService();
 
+  const commentsQuery = useQuery({
+    queryKey: ["comments", postId],
+    queryFn: () => service.getCommentsByPostId(postId)
+  });
+
   useEffect(() => {
-    try {
-      setLoading(true);
-      setError(false);
-      service.getCommentsByPostId(postId).then((res) => {
-        const updatedPosts = Array.from(new Set([...posts, ...res])).filter(
-          (post) => post.parentId === postId
-        );
-        dispatch(updateFeed(updatedPosts));
-        dispatch(setLength(updatedPosts.length));
-        setLoading(false);
-      });
-    } catch (e) {
-      setError(true);
-      console.log(e);
+    if (commentsQuery.status === "success") {
+      dispatch(updateFeed(commentsQuery.data));
+      dispatch(setLength(commentsQuery.data.length));
     }
   }, [postId]);
 
-  return { posts, loading, error };
+  return { posts: commentsQuery.data, loading: commentsQuery.isLoading, error: commentsQuery.error };
 };

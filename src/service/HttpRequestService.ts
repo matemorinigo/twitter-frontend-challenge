@@ -1,6 +1,6 @@
 import type { PostData, SingInData, SingUpData } from "./index";
 import axios from "axios";
-import { S3Service } from "./S3Service";
+
 
 const url =
   process.env.REACT_APP_API_URL || "https://twitter-ieea.onrender.com/api";
@@ -11,6 +11,15 @@ axios.interceptors.request.use((config)=>{
 }, (e)=>{
   return Promise.reject(e)
 })
+
+axios.interceptors.response.use((response)=>{
+  return response
+}, (e)=>{
+  if(e.response.status === 401){
+    localStorage.removeItem("token")
+  }
+  return Promise.reject(e)
+}) 
 
 const httpRequestService = {
   signUp: async (data: Partial<SingUpData>) => {
@@ -30,11 +39,6 @@ const httpRequestService = {
   createPost: async (data: PostData) => {
     const res = await axios.post(`${url}/post`, data);
     if (res.status === 201) {
-      const { upload } = S3Service;
-      for (const imageUrl of res.data.images) {
-        const index: number = res.data.images.indexOf(imageUrl);
-        await upload(data.images![index], imageUrl);
-      }
       return res.data;
     }
   },
@@ -100,14 +104,14 @@ const httpRequestService = {
   },
   followUser: async (userId: string) => {
     const res = await axios.post(
-      `${url}/follow/${userId}`
+      `${url}/follower/follow/${userId}`
     );
     if (res.status === 201) {
       return res.data;
     }
   },
   unfollowUser: async (userId: string) => {
-    const res = await axios.delete(`${url}/follow/${userId}`);
+    const res = await axios.delete(`${url}/follower/unfollow/${userId}`);
     if (res.status === 200) {
       return res.data;
     }
@@ -265,13 +269,35 @@ const httpRequestService = {
   isAuthenticated: async () => {
     return await axios.get(`${url}/auth/validate_token`).then(r=>true).catch(e=>false)
   },
+  commentPost: async (postId: string, content: string, images: string[]) => {
+    const res = await axios.post(`${url}/comments/${postId}`, {
+      content,
+      images,
+    });
+    if (res.status === 201) {
+      return res.data;
+    }
+  },
+  putImage: async (file: File, putObjectUrl: string) => {
+
+    const res = await axios.put(putObjectUrl, file, { headers: { "Content-Type": file.type } });
+
+    if (res.status === 200) {
+      return res.data;
+    }
+
+  },
+  addImage: async (fileType: string) => {
+    const res = await axios.post(`${url}/post/add_media`, {
+      fileType
+    });
+    if (res.status === 200) {
+      return res.data;
+    }
+  }
 };
 
 const useHttpRequestService = () => httpRequestService;
 
-// For class component (remove when unused)
-class HttpService {
-  service = httpRequestService;
-}
 
-export { useHttpRequestService, HttpService };
+export { useHttpRequestService };

@@ -1,7 +1,7 @@
-import React, {useEffect, useState} from "react";
+import {useState} from "react";
 import {StyledTweetContainer} from "./TweetContainer";
 import AuthorData from "./user-post-data/AuthorData";
-import type {Post, User} from "../../service";
+import type {Post } from "../../service";
 import {StyledReactionsContainer} from "./ReactionsContainer";
 import Reaction from "./reaction/Reaction";
 import {useHttpRequestService} from "../../service/HttpRequestService";
@@ -12,6 +12,7 @@ import DeletePostModal from "./delete-post-modal/DeletePostModal";
 import ImageContainer from "./tweet-image/ImageContainer";
 import CommentModal from "../comment/comment-modal/CommentModal";
 import {useNavigate} from "react-router-dom";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 interface TweetProps {
   post: Post;
@@ -21,47 +22,67 @@ const Tweet = ({post}: TweetProps) => {
   const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
   const [showCommentModal, setShowCommentModal] = useState<boolean>(false);
   const service = useHttpRequestService();
-  const [actualPost, setActualPost] = useState<Post>(post);
   const navigate = useNavigate();
-  const [user, setUser] = useState<User>();
-  
-  useEffect(() => {
-    handleGetUser().then(r => setUser(r))
+  const queryClient = useQueryClient();
 
-  }, [])
+  const userQuery = useQuery({
+    queryKey: ["me"],
+    queryFn: () => service.me()
+  })
 
+  const postQuery = useQuery({
+    queryKey: ["post", post.id],
+    queryFn: (): Promise<Post> => service.getPostById(post.id)
+  })
 
-  const handleGetUser = async () => {
-    return await service.me()
-  }
+  const deleteReactionMutation = useMutation({
+    mutationKey: ["deleteReaction"],
+    mutationFn: ({id, type}: {id: string, type: string}) => service.deleteReaction(id, type),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["post", post.id]
+      });
+    } 
+  })
+
+  const createReactionMutation = useMutation({
+    mutationKey: ["createReaction"],
+    mutationFn: ({id, type}: {id: string, type: string}) => service.createReaction(id, type),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["post", post.id]
+      }); 
+    } 
+  })
 
   if(!post.reactions || !post.comments)
     return null
 
   const getCountByType = (type: string): number => {
-    return actualPost.reactions.filter((r) => r.type === type).length ?? 0;
+    return postQuery.data ? postQuery.data.reactions.filter((r) => r.type === type).length ?? 0 : 0;
   };
 
   const handleReaction = async (type: string) => {
-    const reacted = actualPost.reactions.find(
-        (r) => r.type === type && r.userId === user?.id
-    );
-    if (reacted) {
-      await service.deleteReaction(reacted.postId, type);
-  
-    } else {
-      await service.createReaction(actualPost.id, type);
+    if(postQuery.status === "success"){
+      const reacted = postQuery.data.reactions.find(
+          (r) => r.type === type && r.userId === userQuery.data?.id
+      );
+      
+      if (reacted) {
+        deleteReactionMutation.mutate({id: postQuery.data.id, type});
+      } else {
+        createReactionMutation.mutate({id: postQuery.data.id, type});
+      }
 
     }
-    const newPost = await service.getPostById(post.id);
-    setActualPost(newPost);
+    
   };
 
   const hasReactedByType = (type: string): boolean => {
     
-    return actualPost.reactions && actualPost.reactions.some(
-        (r) => r.type === type && r.userId === user?.id
-    );
+    return postQuery.data ? postQuery.data.reactions.some(
+        (r) => r.type === type && r.userId === userQuery.data?.id
+    ) : false;
   };
 
 
@@ -81,7 +102,7 @@ const Tweet = ({post}: TweetProps) => {
               createdAt={post.createdAt}
               profilePicture={post.author.profilePicture}
           />
-          {post.authorId === user?.id && (
+          {post.authorId === userQuery.data?.id && (
               <>
                 <DeletePostModal
                     show={showDeleteModal}
@@ -109,7 +130,7 @@ const Tweet = ({post}: TweetProps) => {
         <StyledReactionsContainer>
           <Reaction
               img={IconType.CHAT}
-              count={actualPost?.comments?.length}
+              count={postQuery.data ? postQuery.data.comments.length : 0}
               reactionFunction={() =>
                   window.innerWidth > 600
                       ? setShowCommentModal(true)

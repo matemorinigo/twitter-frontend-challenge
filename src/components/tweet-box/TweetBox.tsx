@@ -14,6 +14,8 @@ import {StyledButtonContainer} from "./ButtonContainer";
 import {useDispatch, useSelector} from "react-redux";
 import {User} from "../../service";
 import { RootState } from "../../redux/store";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+
 
 interface TweetBoxProps {
     parentId?: string
@@ -26,16 +28,56 @@ const TweetBox = ({parentId, close, mobile}: TweetBoxProps) => {
     const [content, setContent] = useState("");
     const [images, setImages] = useState<File[]>([]);
     const [imagesPreview, setImagesPreview] = useState<string[]>([]);
-
+    const queryClient = useQueryClient()
     const {length, query} = useSelector((state: RootState) => state.user)
     const dispatch = useDispatch();
     const {t} = useTranslation();
     const service = useHttpRequestService()
     const [user, setUser] = useState<User>()
+
+    const postsQuery = useQuery({
+        queryKey: ["posts", query],
+        queryFn: () => service.getPosts(query)
+    })
+
+    const createCommentMutation = useMutation({
+        mutationKey: ["createComment"],
+        mutationFn: ({content, images, parentId}: {content: string, images: string[], parentId: string}) => service.commentPost(parentId, content, images),
+        onSuccess: (data) => {
+            queryClient.invalidateQueries({
+                queryKey: ["posts", query]
+            })
+            queryClient.invalidateQueries({
+                queryKey: ["comments", data.postId]
+            })
+            queryClient.invalidateQueries({
+                queryKey: ["post", data.postId]
+            })
+        }
+    })
+
+    const createPostMutation = useMutation({
+        mutationKey: ["createPost"],
+        mutationFn: ({content, images}: {content: string, images: string[]}) => service.createPost({content, images}),
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: ["posts", query]
+            })
+            
+        }
+    })
  
     useEffect(() => {
         handleGetUser().then(r => setUser(r))
     }, []);
+
+    useEffect(() => {
+        if(postsQuery.status === "success"){
+          dispatch(updateFeed(postsQuery.data));
+          dispatch(setLength(postsQuery.data.length));
+        }
+    
+      }, [postsQuery.status, postsQuery.data]);
 
     const handleGetUser = async () => {
         return await service.me()
@@ -44,19 +86,19 @@ const TweetBox = ({parentId, close, mobile}: TweetBoxProps) => {
     const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         setContent(e.target.value);
     };
-    const handleSubmit = async () => {
-        try {
-            setContent("");
-            setImages([]);
-            setImagesPreview([]);
-            dispatch(setLength(length + 1));
-            const posts = await service.getPosts(query);
-            dispatch(updateFeed(posts));
-            close && close();
-        } catch (e) {
-            console.log(e);
+    
+    const handleSubmitImages = async (files: File[]): Promise<string[]> => {
+        const imagesUrls: string[] = []
+
+        for(const file of files){
+            service.addImage(file.type).then(async (res) => {
+                await service.putImage(file, res.putObjectUrl)
+                imagesUrls.push(res.objectUrl)
+            })
         }
-    };
+
+        return imagesUrls;
+    }
 
     const handleRemoveImage = (index: number) => {
         const newImages = images.filter((i, idx) => idx !== index);
@@ -69,6 +111,24 @@ const TweetBox = ({parentId, close, mobile}: TweetBoxProps) => {
         setImages(newImages);
         const newImagesPreview = newImages.map((i) => URL.createObjectURL(i));
         setImagesPreview(newImagesPreview);
+    };
+
+    const handleSubmit = async () => {
+        try {
+            const imagesUrls = await handleSubmitImages(images)
+            if(parentId){
+                createCommentMutation.mutate({content, images: imagesUrls, parentId})
+            } else {
+                createPostMutation.mutate({content, images: imagesUrls})
+            }
+            setContent("");
+            setImages([]);
+            setImagesPreview([]);
+            dispatch(setLength(length + 1));
+            close && close();
+        } catch (e) {
+            console.log(e);
+        }
     };
 
     return (
