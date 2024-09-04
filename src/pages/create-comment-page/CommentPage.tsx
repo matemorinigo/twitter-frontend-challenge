@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { BackArrowIcon } from "../../components/icon/Icon";
 import Button from "../../components/button/Button";
-import {Post, User} from "../../service";
+import { Post, User } from "../../service";
 import AuthorData from "../../components/tweet/user-post-data/AuthorData";
 import ImageContainer from "../../components/tweet/tweet-image/ImageContainer";
 import { useLocation } from "react-router-dom";
@@ -15,6 +15,7 @@ import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { StyledContainer } from "../../components/common/Container";
 import { StyledLine } from "../../components/common/Line";
 import { StyledP } from "../../components/common/text";
+import { useQuery } from "@tanstack/react-query";
 
 const CommentPage = () => {
   const [content, setContent] = useState("");
@@ -27,13 +28,23 @@ const CommentPage = () => {
   const dispatch = useAppDispatch();
   const { t } = useTranslation();
 
-  useEffect(() => {
-    handleGetUser().then(r => setUser(r))
-  }, []);
+  const userQuery = useQuery({
+    queryKey: ["me"],
+    queryFn: () => service.me()
+  })
 
-  const handleGetUser = async () => {
-    return await service.me()
-  }
+  const postsQuery = useQuery({
+    queryKey: ["posts", query],
+    queryFn: () => service.getPosts(query)
+  })
+
+
+  useEffect(() => {
+    if (userQuery.status === 'success') {
+      setUser(userQuery.data)
+    }
+  }, [userQuery.status, userQuery.data]);
+
 
   useEffect(() => {
     window.innerWidth > 600 && exit();

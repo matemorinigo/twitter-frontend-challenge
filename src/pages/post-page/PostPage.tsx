@@ -8,38 +8,26 @@ import { StyledH5 } from "../../components/common/text";
 import { StyledFeedContainer } from "../home-page/components/contentContainer/FeedContainer";
 import CommentFeed from "../../components/feed/CommentFeed";
 
+import { useQuery } from "@tanstack/react-query";
+import { Post } from "../../service";
+
 
 
 const PostPage = () => {
   const [postId, setPostId] = useState(window.location.href.split("/")[4]);
-  const [post, setPost] = useState(undefined);
+  const [post, setPost] = useState<Post>();
+  const service = useHttpRequestService();
 
-  const service = useHttpRequestService()
-
-  const fetchPost = async () => {
-    service
-      .getPostById(postId)
-      .then(async (res) => {
-        const reactions = await service.getReactionsByPostId(res.id, "ALL")
-        const comments = await service.getCommentsByPostId(res.id)
-        setPost({
-          ...res,
-          reactions,
-          comments
-        });
-      })
-      .catch((e) => {
-        console.log(e);
-      });
-  }
+  const postQuery = useQuery({
+    queryKey: ["post", postId],
+    queryFn: (): Promise<Post> => service.getPostById(postId)
+  })
 
   useEffect(() => {
-    fetchPost()
-  }, [])
-
-  useEffect(() => {
-    fetchPost()
-  }, [postId])
+    if(postQuery.status === 'success'){
+      setPost(postQuery.data)
+    }
+  }, [postQuery.status, postQuery.data, postId])
 
 
   return (

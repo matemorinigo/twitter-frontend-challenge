@@ -5,6 +5,7 @@ import { useHttpRequestService } from "../../service/HttpRequestService";
 import { useTranslation } from "react-i18next";
 import { StyledSearchBarContainer } from "./SearchBarContainer";
 import { StyledSearchBarInput } from "./SearchBarInput";
+import { useMutation, useQuery } from "@tanstack/react-query";
 
 export const SearchBar = () => {
   const [results, setResults] = useState<Author[]>([]);
@@ -12,6 +13,10 @@ export const SearchBar = () => {
   const service = useHttpRequestService();
   let debounceTimer: NodeJS.Timeout;
   const { t } = useTranslation();
+  const searchUserQuery = useQuery({
+    queryKey: ["searchUser", query],
+    queryFn: () => service.searchUsers(query, 4, 0),
+  })
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const inputQuery = e.target.value;
@@ -21,7 +26,8 @@ export const SearchBar = () => {
     clearTimeout(debounceTimer);
     debounceTimer = setTimeout(async () => {
       try {
-        setResults(await service.searchUsers(inputQuery, 4, 0));
+        if(searchUserQuery.status === "success")
+          setResults(searchUserQuery.data);
       } catch (error) {
         console.log(error);
       }

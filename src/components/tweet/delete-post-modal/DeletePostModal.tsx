@@ -9,6 +9,7 @@ import { ButtonType } from "../../button/StyledButton";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import { Post } from "../../../service";
 import { StyledDeletePostModalContainer } from "./DeletePostModalContainer";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 interface DeletePostModalProps {
   show: boolean;
@@ -26,13 +27,24 @@ export const DeletePostModal = ({
   const dispatch = useAppDispatch();
   const service = useHttpRequestService();
   const { t } = useTranslation();
+  const queryClient = useQueryClient();
 
-  const handleDelete = () => {
-    try {
-      service.deletePost(id).then((res) => console.log(res));
+  const deletePostMutation = useMutation({
+    mutationKey: ["deletePost", id],
+    mutationFn: () => service.deletePost(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["posts"],
+      });
       const newFeed = feed.filter((post: Post) => post.id !== id);
       dispatch(updateFeed(newFeed));
       handleClose();
+    }
+  })
+
+  const handleDelete = () => {
+    try {
+      deletePostMutation.mutate();
     } catch (error) {
       console.log(error);
     }

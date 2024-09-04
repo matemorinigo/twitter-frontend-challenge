@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Author } from "../service";
 import { useHttpRequestService } from "../service/HttpRequestService";
 import { LIMIT } from "../util/Constants";
+import { useQuery } from "@tanstack/react-query";
 
 interface UseGetRecommendationsProps {
   query: string;
@@ -12,11 +13,14 @@ export const useGetSearchUsers = ({
   skip,
 }: UseGetRecommendationsProps) => {
   const [users, setUsers] = useState<Author[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
   const [hasMore, setHasMore] = useState(false);
 
   const service = useHttpRequestService();
+
+  const searchUserQuery = useQuery({
+    queryKey: ["searchUser", query],
+    queryFn: () => service.searchUsers(query, LIMIT, skip),
+  })
 
   useEffect(() => {
     setUsers([]);
@@ -24,30 +28,24 @@ export const useGetSearchUsers = ({
 
   useEffect(() => {
     try {
-      setLoading(true);
-      setError(false);
 
-      service.searchUsers(query, LIMIT, skip).then((res) => {
-        const updatedUsers = [...users, ...res];
-        setUsers(
-          updatedUsers
-            .filter((user, index) => {
-              const currentIndex = updatedUsers.findIndex(
-                (u) => u.id === user.id
-              );
-              return currentIndex === index;
-            })
-            .filter((user) => user.username.includes(query))
-        );
+      const updatedUsers = [...users, ...searchUserQuery.data];
+      setUsers(
+        updatedUsers
+          .filter((user, index) => {
+            const currentIndex = updatedUsers.findIndex(
+              (u) => u.id === user.id
+            );
+            return currentIndex === index;
+          })
+          .filter((user) => user.username.includes(query))
+      );
 
-        setHasMore(res.length > 0);
-        setLoading(false);
-      });
+      setHasMore(searchUserQuery.data.length > 0);
     } catch (e) {
-      setError(true);
       console.log(e);
     }
-  }, [query, skip]);
+  }, [searchUserQuery.status, searchUserQuery.data, query, skip]);
 
-  return { users, loading, error, hasMore };
+  return { users, loading:searchUserQuery.isLoading, error: searchUserQuery.error, hasMore };
 };

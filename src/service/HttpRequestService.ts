@@ -111,7 +111,7 @@ const httpRequestService = {
     }
   },
   unfollowUser: async (userId: string) => {
-    const res = await axios.delete(`${url}/follower/unfollow/${userId}`);
+    const res = await axios.post(`${url}/follower/unfollow/${userId}`);
     if (res.status === 200) {
       return res.data;
     }
@@ -120,7 +120,7 @@ const httpRequestService = {
     try {
       const cancelToken = axios.CancelToken.source();
 
-      const response = await axios.get(`${url}/user/search`, {
+      const response = await axios.get(`${url}/user/by_username/search`, {
         params: {
           username,
           limit,

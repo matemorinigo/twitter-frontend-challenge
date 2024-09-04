@@ -8,25 +8,26 @@ import { useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { StyledUserSuggestionContainer } from "./UserSeuggestionContainer";
 import { Post } from "../../service";
+import { useQuery } from "@tanstack/react-query";
 
 const HomePage = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const query = useAppSelector((state) => state.user.query);
   const service = useHttpRequestService();
+  const getPostsQuery = useQuery({
+    queryKey: ["posts", query],
+    queryFn: () => service.getPosts(query)
+  })
 
-  const handleSetUser = async () => {
-    try {
-      const data = await service.getPosts(query);
-      dispatch(updateFeed(data));
-    } catch (e) {
-      navigate("/sign-in");
-    }
-  };
 
   useEffect(() => {
-    handleSetUser().then();
-  }, []);
+    if(getPostsQuery.status === "success"){
+      dispatch(updateFeed(getPostsQuery.data));
+    } else if(getPostsQuery.status === "error"){
+      navigate("/sign-in");
+    }
+  }, [getPostsQuery.status, getPostsQuery.data]);
 
   return (
     <>

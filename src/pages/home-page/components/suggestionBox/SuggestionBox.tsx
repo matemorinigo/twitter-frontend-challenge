@@ -4,21 +4,22 @@ import { useHttpRequestService } from "../../../../service/HttpRequestService";
 import { useTranslation } from "react-i18next";
 import { User } from "../../../../service";
 import { StyledSuggestionBoxContainer } from "./SuggestionBoxContainer";
+import { useQuery } from "@tanstack/react-query";
 
 const SuggestionBox = () => {
   const [users, setUsers] = useState<User[]>([]);
-  const httpService = useHttpRequestService();
+  const service = useHttpRequestService();
   const { t } = useTranslation();
+  const recommendedUsersQuery = useQuery({
+    queryKey: ["recommendedUsers"],
+    queryFn: () => service.getRecommendedUsers(6, 0)
+  })
 
   useEffect(() => {
-    try {
-      httpService.getRecommendedUsers(6, 0).then((res) => {
-        setUsers(res);
-      });
-    } catch (e) {
-      console.log(e);
+    if(recommendedUsersQuery.status === "success"){
+      setUsers(recommendedUsersQuery.data);
     }
-  }, []);
+  }, [recommendedUsersQuery.status, recommendedUsersQuery.data]);
 
   return (
     <StyledSuggestionBoxContainer>

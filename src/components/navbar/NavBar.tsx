@@ -19,6 +19,7 @@ import {StyledP} from "../common/text";
 import {useHttpRequestService} from "../../service/HttpRequestService";
 import {User} from "../../service";
 import ProfileLogoutPrompt from "../profile-logout/ProfileLogoutPrompt";
+import { useQuery } from "@tanstack/react-query";
 
 const NavBar = () => {
   const location = useLocation();
@@ -29,13 +30,17 @@ const NavBar = () => {
   const [user, setUser] = useState<User>()
   const {t} = useTranslation();
 
-  useEffect(() => {
-    handleGetUser().then(r => setUser(r))
-  }, []);
+  const userQuery = useQuery({
+    queryKey: ["me"],
+    queryFn: () => service.me()
+  })
 
-  const handleGetUser = async () => {
-    return await service.me()
-  }
+
+  useEffect(() => {
+    if(userQuery.status === 'success') {
+      setUser(userQuery.data)
+    }
+  }, [userQuery.status, userQuery.data]);
 
   const handleAvatarClick = () => {
     if (window.innerWidth < 1265) {

@@ -11,6 +11,7 @@ import {StyledContainer} from "../../common/Container";
 import {StyledP} from "../../common/text";
 import {useHttpRequestService} from "../../../service/HttpRequestService";
 import {User} from "../../../service";
+import { useQuery } from "@tanstack/react-query";
 
 interface LogoutPromptProps {
   show: boolean;
@@ -24,14 +25,18 @@ const LogoutPrompt = ({ show }: LogoutPromptProps) => {
   const service = useHttpRequestService()
   const [user, setUser] = useState<User>()
 
+  const userQuery = useQuery({
+    queryKey: ["me"],
+    queryFn: () => service.me()
+  })
+
 
   useEffect(() => {
-    handleGetUser().then(r => setUser(r))
-  }, []);
+    if(userQuery.status === 'success') {
+      setUser(userQuery.data)
+    }
+  }, [userQuery.status, userQuery.data]);
 
-  const handleGetUser = async () => {
-    return await service.me()
-  }
 
   const handleClick = () => {
     setShowModal(true);

@@ -45,7 +45,7 @@ const TweetBox = ({parentId, close, mobile}: TweetBoxProps) => {
         mutationFn: ({content, images, parentId}: {content: string, images: string[], parentId: string}) => service.commentPost(parentId, content, images),
         onSuccess: (data) => {
             queryClient.invalidateQueries({
-                queryKey: ["posts", query]
+                queryKey: ["posts"]
             })
             queryClient.invalidateQueries({
                 queryKey: ["comments", data.postId]
@@ -61,7 +61,7 @@ const TweetBox = ({parentId, close, mobile}: TweetBoxProps) => {
         mutationFn: ({content, images}: {content: string, images: string[]}) => service.createPost({content, images}),
         onSuccess: () => {
             queryClient.invalidateQueries({
-                queryKey: ["posts", query]
+                queryKey: ["posts"]
             })
             
         }
