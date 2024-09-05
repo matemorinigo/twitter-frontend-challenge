@@ -56,7 +56,7 @@ const StyledSignInWrapper = styled.div`
       margin-bottom: 16px;
     }
     .border {
-      height: 80vh; /* Set height to full viewport height */
+      height: 100vh; /* Set height to full viewport height */
       width: 600px;
       display: flex;
       flex-direction: column;
