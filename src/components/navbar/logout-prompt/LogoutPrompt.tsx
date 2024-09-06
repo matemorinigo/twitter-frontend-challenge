@@ -71,7 +71,7 @@ const LogoutPrompt = ({ show, setLogoutOpen }: LogoutPromptProps) => {
   return (
     <>
       {showPrompt && (
-        <div ref={ref}>
+        <div ref={!showModal ? ref : undefined }>
           <StyledPromptContainer>
             <StyledContainer
               flexDirection={"row"}
@@ -95,7 +95,6 @@ const LogoutPrompt = ({ show, setLogoutOpen }: LogoutPromptProps) => {
 
       )}
       <Modal
-        setShowModal={setShowModal}
         show={showModal}
         text={t("modal-content.logout")}
         img={logo}

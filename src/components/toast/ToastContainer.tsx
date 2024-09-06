@@ -9,31 +9,42 @@ interface ToastContainerProps {
 
 export const StyledToastContainer = styled.div`
   display: flex;
+  position: absolute;
+  bottom: 10px;
+  left: 0;
+  right: 0;
+  margin: auto;
+  width: 250px;
   padding: 8px 16px;
   align-items: center;
-  gap: 16px;
+  justify-items: between;
+  gap: 20px;
   position: fixed;
   border-radius: 8px;
   border: 1px solid
     ${(props: ToastContainerProps) => {
-      switch (props.type) {
-        case ToastType.ALERT:
-          return props.theme.colors.errorContainer;
-        default:
-          return props.theme.colors.errorContainer;
-      }
-    }};
+    switch (props.type) {
+      case ToastType.ALERT:
+        return props.theme.colors.errorContainer;
+      case ToastType.SUCCESS:
+        return props.theme.colors.successContainer;
+      default:
+        return props.theme.colors.errorContainer;
+    }
+  }};
   background: ${(props: ToastContainerProps) => props.theme.background};
 
   p {
     color: ${(props: ToastContainerProps) => {
-      switch (props.type) {
-        case ToastType.ALERT:
-          return props.theme.colors.errorContainer;
-        default:
-          return props.theme.colors.errorContainer;
-      }
-    }};
+    switch (props.type) {
+      case ToastType.ALERT:
+        return props.theme.colors.errorContainer;
+      case ToastType.SUCCESS:
+        return props.theme.colors.successContainer;
+      default:
+        return props.theme.colors.errorContainer;
+    }
+  }};
     margin: 0;
     font-variant-numeric: lining-nums tabular-nums;
     /* Body-2 */

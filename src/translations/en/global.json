@@ -57,5 +57,12 @@
   "title": {
     "login": "Enter your email or username",
     "register": "Create your account"
+  },
+  "toast": {
+    "tweet": "Tweet posted successfully!",
+    "error": "An error occurred",
+    "deleteProfile": "Profile deleted successfully",
+    "deleteTweet": "Tweet deleted successfully",
+    "maxChar": "You have reached the maximum number of characters"
   }
 }

@@ -10,6 +10,8 @@ import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import { Post } from "../../../service";
 import { StyledDeletePostModalContainer } from "./DeletePostModalContainer";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import useToastContext from "../../../hooks/useToastContext";
+import { ToastType } from "../../toast/Toast";
 
 interface DeletePostModalProps {
   show: boolean;
@@ -28,6 +30,7 @@ export const DeletePostModal = ({
   const service = useHttpRequestService();
   const { t } = useTranslation();
   const queryClient = useQueryClient();
+  const addToast = useToastContext();
 
   const deletePostMutation = useMutation({
     mutationKey: ["deletePost", id],
@@ -38,6 +41,7 @@ export const DeletePostModal = ({
       });
       const newFeed = feed.filter((post: Post) => post.id !== id);
       dispatch(updateFeed(newFeed));
+      addToast({message: t("toast.deleteTweet"), type: ToastType.ALERT, show: true})
       handleClose();
     }
   })
@@ -46,7 +50,7 @@ export const DeletePostModal = ({
     try {
       deletePostMutation.mutate();
     } catch (error) {
-      console.log(error);
+      addToast({message: t("toast.error"), type: ToastType.ALERT, show: true})
     }
   };
 

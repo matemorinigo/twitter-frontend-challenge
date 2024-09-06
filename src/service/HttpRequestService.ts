@@ -56,7 +56,6 @@ const httpRequestService = {
   getPosts: async (query: string) => {
     const res = await axios.get(`${url}/post/${query}`);
     if (res.status === 200) {
-      console.log(res.data)
       return res.data;
     }
   },
@@ -185,6 +184,7 @@ const httpRequestService = {
 
     if (res.status === 204) {
       localStorage.removeItem("token");
+      return res.data;
     }
   },
 

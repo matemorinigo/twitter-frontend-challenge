@@ -3,6 +3,9 @@ import { Author } from "../service";
 import { useHttpRequestService } from "../service/HttpRequestService";
 import { LIMIT } from "../util/Constants";
 import { useQuery } from "@tanstack/react-query";
+import useToastContext from "./useToastContext";
+import { ToastType } from "../components/toast/Toast";
+import { t } from "i18next";
 
 interface UseGetRecommendationsProps {
   query: string;
@@ -14,6 +17,7 @@ export const useGetSearchUsers = ({
 }: UseGetRecommendationsProps) => {
   const [users, setUsers] = useState<Author[]>([]);
   const [hasMore, setHasMore] = useState(false);
+  const addToast = useToastContext();
 
   const service = useHttpRequestService();
 
@@ -43,7 +47,7 @@ export const useGetSearchUsers = ({
 
       setHasMore(searchUserQuery.data.length > 0);
     } catch (e) {
-      console.log(e);
+      addToast({message: t("toast.error"), type: ToastType.ALERT, show: true})
     }
   }, [searchUserQuery.status, searchUserQuery.data, query, skip]);
 

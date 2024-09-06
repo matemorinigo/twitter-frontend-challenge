@@ -15,6 +15,8 @@ import {useDispatch, useSelector} from "react-redux";
 import {User} from "../../service";
 import { RootState } from "../../redux/store";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import useToastContext from "../../hooks/useToastContext";
+import { ToastType } from "../toast/Toast";
 
 
 interface TweetBoxProps {
@@ -34,6 +36,7 @@ const TweetBox = ({parentId, close, mobile}: TweetBoxProps) => {
     const {t} = useTranslation();
     const service = useHttpRequestService()
     const [user, setUser] = useState<User>()
+    const addToast = useToastContext()
 
     const postsQuery = useQuery({
         queryKey: ["posts", query],
@@ -84,6 +87,9 @@ const TweetBox = ({parentId, close, mobile}: TweetBoxProps) => {
     }
 
     const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+        if(e.target.value.length === 240){
+            addToast({message: t("toast.maxChar"), type: ToastType.ALERT, show: true})
+        }
         setContent(e.target.value);
     };
     
@@ -125,9 +131,10 @@ const TweetBox = ({parentId, close, mobile}: TweetBoxProps) => {
             setImages([]);
             setImagesPreview([]);
             dispatch(setLength(length + 1));
+            addToast({message: t("toast.tweet"), type: ToastType.SUCCESS, show: true});
             close && close();
         } catch (e) {
-            console.log(e);
+            addToast({message: t("toast.error"), type: ToastType.ALERT, show: true})
         }
     };
 

@@ -16,6 +16,8 @@ import { StyledContainer } from "../../components/common/Container";
 import { StyledLine } from "../../components/common/Line";
 import { StyledP } from "../../components/common/text";
 import { useQuery } from "@tanstack/react-query";
+import useToastContext from "../../hooks/useToastContext";
+import { ToastType } from "../../components/toast/Toast";
 
 const CommentPage = () => {
   const [content, setContent] = useState("");
@@ -27,6 +29,7 @@ const CommentPage = () => {
   const { length, query } = useAppSelector((state) => state.user);
   const dispatch = useAppDispatch();
   const { t } = useTranslation();
+  const addToast = useToastContext(); 
 
   const userQuery = useQuery({
     queryKey: ["me"],
@@ -57,7 +60,7 @@ const CommentPage = () => {
         setPost(res);
       })
       .catch((e) => {
-        console.log(e);
+        addToast({message: t("toast.error"), type: ToastType.ALERT, show: true})
       });
   }, [postId]);
 

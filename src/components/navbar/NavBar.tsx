@@ -10,7 +10,7 @@ import LogoutPrompt from "./logout-prompt/LogoutPrompt";
 import ThreeDots from "../common/ThreeDots";
 import {useTranslation} from "react-i18next";
 import {ButtonType} from "../button/StyledButton";
-import Icon from "../../assets/icon.jpg";
+import Icon from "../../assets/icon.png";
 import {StyledNavBarContainer} from "./NavBarContainer";
 import {StyledContainer} from "../common/Container";
 import {StyledIconContainer} from "./IconContainer";

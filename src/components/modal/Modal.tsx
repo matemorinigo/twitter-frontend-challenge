@@ -13,7 +13,6 @@ interface ModalProps {
   img?: string;
   onClose: () => void;
   acceptButton: ReactNode;
-  setShowModal?:  React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const Modal = ({
@@ -23,12 +22,11 @@ const Modal = ({
   onClose,
   img,
   title,
-  setShowModal
 }: ModalProps) => {
   return (
     <>
       {show && (
-        <StyledBlurredBackground onClick={setShowModal ? ()=>setShowModal(false) : undefined}>
+        <StyledBlurredBackground onClick={onClose}>
           <StyledModalContainer onClick={e=>e.stopPropagation()}>
             <StyledContainer alignItems={"center"} justifyContent={"center"}>
               {img && (

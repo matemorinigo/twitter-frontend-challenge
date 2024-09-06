@@ -29,7 +29,7 @@ export const SearchBar = () => {
         if(searchUserQuery.status === "success")
           setResults(searchUserQuery.data);
       } catch (error) {
-        console.log(error);
+        
       }
     }, 300);
   };

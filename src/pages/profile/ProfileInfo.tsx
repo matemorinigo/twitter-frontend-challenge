@@ -1,7 +1,7 @@
 import React from "react";
 import { StyledContainer } from "../../components/common/Container";
 import Avatar from "../../components/common/avatar/Avatar";
-import Icon from "../../assets/icon.jpg";
+import Icon from "../../assets/icon.png";
 import { StyledH5, StyledP } from "../../components/common/text";
 
 interface ProfileInfoContainerProps {
@@ -17,7 +17,7 @@ const ProfileInfo = ({
   return (
     <StyledContainer gap={"32px"} flex={2} flexDirection={"row"}>
       <Avatar
-        src={profilePicture === null ? Icon : profilePicture!}
+        src={profilePicture === undefined ? Icon : profilePicture!}
         width={"133px"}
         height={"133px"}
         alt={name ?? "Name"}

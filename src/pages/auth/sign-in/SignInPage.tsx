@@ -109,6 +109,7 @@ const SignInPage = () => {
                   buttonType={ButtonType.OUTLINED}
                   size={"MEDIUM"}
                   onClick={() => navigate("/sign-up")}
+                  type="button"
                 />
               </div>
             </form>

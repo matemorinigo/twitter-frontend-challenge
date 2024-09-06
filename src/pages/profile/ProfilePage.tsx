@@ -3,7 +3,7 @@ import ProfileInfo from "./ProfileInfo";
 import { useNavigate, useParams } from "react-router-dom";
 import Modal from "../../components/modal/Modal";
 import { useTranslation } from "react-i18next";
-import { User } from "../../service";
+import { Follow, User } from "../../service";
 import { ButtonType } from "../../components/button/StyledButton";
 import { useHttpRequestService } from "../../service/HttpRequestService";
 import Button from "../../components/button/Button";
@@ -11,6 +11,8 @@ import ProfileFeed from "../../components/feed/ProfileFeed";
 import { StyledContainer } from "../../components/common/Container";
 import { StyledH5 } from "../../components/common/text";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { ToastType } from "../../components/toast/Toast";
+import useToastContext from "../../hooks/useToastContext";
 
 const ProfilePage = () => {
   const [profile, setProfile] = useState<User | null>(null);
@@ -30,6 +32,13 @@ const ProfilePage = () => {
 
   const { t } = useTranslation();
   const queryClient = useQueryClient()
+  
+  const addToast = useToastContext()
+
+  const followingQuery = useQuery({
+    queryKey: ["following"],
+    queryFn: () => service.getFollowing()
+  })
 
 
   const followMutation = useMutation({
@@ -60,7 +69,7 @@ const ProfilePage = () => {
     mutationKey: ["deleteProfile"],
     mutationFn: () => service.deleteProfile(),
     onSuccess: () => {
-      localStorage.removeItem("token");
+      addToast({message: t("toast.deleteProfile"), type: ToastType.ALERT, show: true})
       navigate("/sign-in");
     }
   })
@@ -85,6 +94,10 @@ const ProfilePage = () => {
       setUser(userQuery.data)
     }
   }, [userQuery.status, userQuery.data]);
+
+  useEffect(()=>{
+    setFollowing(followingQuery.data?.some((follow: Follow) =>  follow.followedId === profileDataQuery.data?.id))
+  }, [followingQuery.status, followingQuery.data])
 
   const handleButtonType = (): { component: ButtonType; text: string } => {
     if (profile?.id === user?.id)
@@ -112,9 +125,7 @@ const ProfilePage = () => {
     if (profileDataQuery.status === 'success') {
       setProfile(profileDataQuery.data)
       setFollowing(
-        profileDataQuery.data
-          ? profileDataQuery.data?.followers.some((follower: User) => follower.id === user?.id)
-          : false
+        followingQuery.data?.some((follow: Follow) =>  follow.followedId === profileDataQuery.data?.id)
       );
     }
   }, [id, profileDataQuery.status, profileDataQuery.data]);
@@ -151,19 +162,10 @@ const ProfilePage = () => {
     if (profileDataQuery.status === 'success') {
 
       setProfile(profileDataQuery.data)
-      setFollowing(profileDataQuery.data ?
-        profileDataQuery.data.followers.some((follower: User) => follower.id === user?.id)
-        :
-        false)
-    } else {
-      setProfile(profileViewQuery.data)
-      setFollowing(false)
-    }
+      setFollowing(followingQuery.data?.some((follow: Follow) =>  follow.followedId === profileDataQuery.data?.id))
+    } 
     setProfile(profileDataQuery.data)
-    setFollowing(profileDataQuery.data ?
-      profileDataQuery.data.followers.some((follower: User) => follower.id === user?.id)
-      :
-      false)
+    setFollowing(followingQuery.data?.some((follow: Follow) =>  follow.followedId === profileDataQuery.data?.id))
 
   };
 

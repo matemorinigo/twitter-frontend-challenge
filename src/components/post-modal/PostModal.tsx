@@ -7,14 +7,15 @@ interface PostModalProps {
   onClose: () => void;
   show: boolean;
   children: ReactNode;
+  setShowModal?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const PostModal = ({ onClose, show, children }: PostModalProps) => {
   return (
     <>
       {show && (
-        <StyledBlurredBackground>
-          <StyledTweetModalContainer>
+        <StyledBlurredBackground onClick={onClose}>
+          <StyledTweetModalContainer onClick={e => e.stopPropagation()}>
             <ModalCloseButton onClick={onClose} />
             {children}
           </StyledTweetModalContainer>

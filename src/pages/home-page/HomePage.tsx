@@ -9,6 +9,7 @@ import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { StyledUserSuggestionContainer } from "./UserSeuggestionContainer";
 import { Post } from "../../service";
 import { useQuery } from "@tanstack/react-query";
+import { ToastContextProvider } from "../../contexts/ToastContext";
 
 const HomePage = () => {
   const dispatch = useAppDispatch();
@@ -22,16 +23,18 @@ const HomePage = () => {
 
 
   useEffect(() => {
-    if(getPostsQuery.status === "success"){
+    if (getPostsQuery.status === "success") {
       dispatch(updateFeed(getPostsQuery.data));
-    } else if(getPostsQuery.status === "error"){
+    } else if (getPostsQuery.status === "error") {
       navigate("/sign-in");
     }
   }, [getPostsQuery.status, getPostsQuery.data]);
 
   return (
     <>
+
       <ContentContainer />
+
       <StyledUserSuggestionContainer>
         <SearchBar />
         <SuggestionBox />

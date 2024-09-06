@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Icon, IconType } from "../../icon/Icon";
 import { StyledReactionContainer } from "./ReactionContainer";
+import { ToastType } from "../../toast/Toast";
+import { t } from "i18next";
+import useToastContext from "../../../hooks/useToastContext";
 interface ReactionProps {
   img: IconType;
   count: number;
@@ -17,7 +20,7 @@ const Reaction = ({
 }: ReactionProps) => {
   const [reactionCount, setReactionCount] = useState(count);
   const [reactionReacted, setReactionReacted] = useState(reacted);
-
+  const addToast = useToastContext();
 
   useEffect(() => {
     setReactionCount(count);
@@ -32,7 +35,7 @@ const Reaction = ({
       );
       setReactionReacted(!reactionReacted);
     } catch (error) {
-      console.log(error);
+      addToast({message: t("toast.error"), type: ToastType.ALERT, show: true})
     }
   };
 

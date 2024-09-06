@@ -59,5 +59,12 @@
   "title": {
     "login": "Ingresa tu correo electrónico o @nombre_de_usuario.",
     "register": "Crea tu cuenta"
+  },
+  "toast": {
+    "tweet": "Tweet posteado con exito!",
+    "error": "Ha ocurrido un error inesperado",
+    "deleteProfile": "Perfil eliminado con exito",
+    "deleteTweet": "Tweet eliminado con exito",
+    "maxChar": "Alcanzaste la maxima cantidad de caracteres"
   }
 }

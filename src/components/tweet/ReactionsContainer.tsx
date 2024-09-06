@@ -6,4 +6,5 @@ export const StyledReactionsContainer = styled.div`
   align-items: flex-start;
   flex-direction: row;
   gap: 16px;
+  height: auto;
 `;

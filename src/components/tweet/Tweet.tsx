@@ -119,7 +119,7 @@ const Tweet = ({post}: TweetProps) => {
               </>
           )}
         </StyledContainer>
-        <StyledContainer onClick={() => navigate(`/post/${post.id}`)}>
+        <StyledContainer onClick={() => navigate(`/post/${post.id}`)} style={{ overflow: 'hidden', wordWrap: 'break-word', wordBreak: 'break-word' }}>
           <p>{post.content}</p>
         </StyledContainer>
         {post.images && post.images!.length > 0 && (
