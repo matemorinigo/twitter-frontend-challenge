@@ -38,6 +38,9 @@ const FollowUserBox = ({
       queryClient.invalidateQueries({
         queryKey: ["following"]
       })
+      queryClient.invalidateQueries({
+        queryKey: ["infinitePosts"]
+      })
       setIsFollowing(true)
     }
   })
@@ -48,6 +51,9 @@ const FollowUserBox = ({
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["following"]
+      })
+      queryClient.invalidateQueries({
+        queryKey: ["infinitePosts"]
       })
       setIsFollowing(false)
     }

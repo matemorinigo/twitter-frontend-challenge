@@ -53,8 +53,13 @@ const httpRequestService = {
       return res.data;
     }
   },
-  getPosts: async (query: string) => {
-    const res = await axios.get(`${url}/post/${query}`);
+  getPosts: async (query: string, nextCursor: string | undefined = undefined) => {
+    const res = await axios.get(`${url}/post/${query}`, {
+      params: {
+        limit: 10,
+        after: nextCursor,
+      },
+    });
     if (res.status === 200) {
       return res.data;
     }

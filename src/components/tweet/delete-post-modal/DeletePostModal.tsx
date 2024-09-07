@@ -37,7 +37,7 @@ export const DeletePostModal = ({
     mutationFn: () => service.deletePost(id),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["posts"],
+        queryKey: ["infinitePosts"],
       });
       const newFeed = feed.filter((post: Post) => post.id !== id);
       dispatch(updateFeed(newFeed));

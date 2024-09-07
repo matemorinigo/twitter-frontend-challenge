@@ -4,7 +4,7 @@ import { Author } from "../../service";
 import { useHttpRequestService } from "../../service/HttpRequestService";
 import { useTranslation } from "react-i18next";
 import { StyledSearchBarContainer } from "./SearchBarContainer";
-import { StyledSearchBarInput } from "./SearchBarInput";
+import { Size, StyledSearchBarInputScratch } from "./SearchBarInputScratch";
 import { useMutation, useQuery } from "@tanstack/react-query";
 
 export const SearchBar = () => {
@@ -36,7 +36,8 @@ export const SearchBar = () => {
 
   return (
     <StyledSearchBarContainer>
-      <StyledSearchBarInput
+      <StyledSearchBarInputScratch
+        inputSize={Size.LARGE}
         onChange={handleChange}
         value={query}
         placeholder={t("placeholder.search")}

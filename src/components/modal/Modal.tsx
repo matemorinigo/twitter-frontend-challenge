@@ -5,6 +5,8 @@ import { ButtonType } from "../button/StyledButton";
 import { StyledModalContainer } from "./ModalContainer";
 import { StyledContainer } from "../common/Container";
 import { StyledH5, StyledP } from "../common/text";
+import ButtonScratch from "../button/ButtonScratch";
+import { ButtonScratchType } from "../button/StyledButtonScratch";
 
 interface ModalProps {
   show: boolean;
@@ -44,8 +46,8 @@ const Modal = ({
                 </StyledContainer>
                 <StyledContainer alignItems={"center"}>
                   {acceptButton}
-                  <Button
-                    buttonType={ButtonType.OUTLINED}
+                  <ButtonScratch
+                    buttonType={ButtonScratchType.OUTLINED}
                     text={"Cancel"}
                     size={"MEDIUM"}
                     onClick={onClose}
