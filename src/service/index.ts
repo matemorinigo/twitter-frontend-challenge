@@ -68,6 +68,13 @@ export interface MessageDTO {
   sender: Author;
 }
 
+export interface Message {
+  senderId: string;
+  receiverId: string;
+  content: string;
+  createdAt: Date;
+}
+
 export interface ChatDTO {
   id: string;
   users: Author[];

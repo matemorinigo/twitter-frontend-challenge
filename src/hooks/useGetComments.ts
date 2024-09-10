@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useHttpRequestService } from "../service/HttpRequestService";
 import { setLength, updateFeed } from "../redux/user";
-import { useAppDispatch, useAppSelector } from "../redux/hooks";
+import { useAppDispatch } from "../redux/hooks";
 import { useQuery } from "@tanstack/react-query";
 
 interface UseGetCommentsProps {
@@ -9,9 +9,6 @@ interface UseGetCommentsProps {
 }
 
 export const useGetComments = ({ postId }: UseGetCommentsProps) => {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
-  const posts = useAppSelector((state) => state.user.feed);
 
   const dispatch = useAppDispatch();
 

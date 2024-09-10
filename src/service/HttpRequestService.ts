@@ -299,6 +299,18 @@ const httpRequestService = {
     if (res.status === 200) {
       return res.data;
     }
+  },
+  getMutuals: async () => {
+    const res = await axios.get(`${url}/follower/mutuals`);
+    if (res.status === 200) {
+      return res.data;
+    }
+  },
+  getChatHistory: async (userId: string) => {
+    const res = await axios.get(`${url}/messages/${userId}`);
+    if (res.status === 200) {
+      return res.data;
+    }
   }
 };
 

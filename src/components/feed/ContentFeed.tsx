@@ -1,7 +1,5 @@
-import React from "react";
 import Feed from "./Feed";
 import { useGetFeed } from "../../hooks/useGetFeed";
-import { useQuery } from "@tanstack/react-query";
 import { useInView } from "react-intersection-observer";
 
 const ContentFeed = () => {
