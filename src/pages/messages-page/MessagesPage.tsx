@@ -6,8 +6,20 @@ import UsersFeed from './components/UsersFeed'
 import ChatMessages from './components/ChatMessages'
 import { StyledUsersFeedContainer } from './components/StyledUsersFeedContainer'
 import NoSelectedUserMessage from './components/NoSelectedUserMessage'
+import io from 'socket.io-client'
+
+
+const socket = io('localhost:8080', {
+    auth: {
+        token: localStorage.getItem('token')
+    }
+})
+
+
 
 const MessagesPage = () => {
+
+
     const [selectedUser, setSelectedUser] = React.useState<string | null>(null)
 
     useEffect(() => {
@@ -29,7 +41,7 @@ const MessagesPage = () => {
             </StyledUsersFeedContainer>
             <StyledUsersFeedContainer>
                     {!selectedUser && <NoSelectedUserMessage/>}
-                    {selectedUser && <ChatMessages userId={selectedUser} />}
+                    {selectedUser && <ChatMessages userId={selectedUser} socket={socket} />}
             </StyledUsersFeedContainer>
         </StyledMessagesContainer>
     )

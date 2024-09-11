@@ -39,5 +39,5 @@ export const ChatContainer = styled.div`
   padding: 10px;
   gap: 5px;
   justify-content: flex-end;
-  overflow-y: auto;
+  overflow-y: scroll;
 `;

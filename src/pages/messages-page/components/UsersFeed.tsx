@@ -14,7 +14,7 @@ const UsersFeed = ({setUserSelected}: UsersFeedProps) => {
       {loading && <p>Loading...</p>}
       <StyledUserFeedContainer>
         {mutuals.map((user) => {
-          return (<UserMessage id={user.id} name={user.name ? user.name : ''} username={user.username} createdAt={user.createdAt} profilePic={user.profilePicture ? user.profilePicture : null} onClick={()=>setUserSelected(prev => {if(prev === user.id){ return null } else {return user.id}})} />)
+          return (<UserMessage key={user.id} id={user.id} name={user.name ? user.name : ''} username={user.username} createdAt={user.createdAt} profilePic={user.profilePicture ? user.profilePicture : null} onClick={()=>setUserSelected(prev => {if(prev === user.id){ return null } else {return user.id}})} />)
         })}
       </StyledUserFeedContainer>
     </>

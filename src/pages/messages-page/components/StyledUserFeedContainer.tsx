@@ -7,4 +7,5 @@ export const StyledUserFeedContainer = styled.div`
     justify-content: center;
     justify-items: center;
     width: 100%;
+    max-width: 450px;
 `

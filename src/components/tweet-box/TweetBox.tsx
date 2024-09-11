@@ -43,6 +43,19 @@ const TweetBox = ({parentId, close, mobile}: TweetBoxProps) => {
         queryFn: () => service.getPosts(query)
     })
 
+
+    const userQuery = useQuery({
+        queryKey: ["me"],
+        queryFn: () => service.me()
+      })
+    
+    
+      useEffect(() => {
+        if(userQuery.status === 'success') {
+          setUser(userQuery.data)
+        }
+      }, [userQuery.status, userQuery.data]);
+
     const createCommentMutation = useMutation({
         mutationKey: ["createComment"],
         mutationFn: ({content, images, parentId}: {content: string, images: string[], parentId: string}) => service.commentPost(parentId, content, images),
@@ -70,9 +83,6 @@ const TweetBox = ({parentId, close, mobile}: TweetBoxProps) => {
         }
     })
  
-    useEffect(() => {
-        handleGetUser().then(r => setUser(r))
-    }, []);
 
     useEffect(() => {
         if(postsQuery.status === "success"){
@@ -82,9 +92,6 @@ const TweetBox = ({parentId, close, mobile}: TweetBoxProps) => {
     
       }, [postsQuery.status, postsQuery.data]);
 
-    const handleGetUser = async () => {
-        return await service.me()
-    }
 
     const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         if(e.target.value.length === 240){
