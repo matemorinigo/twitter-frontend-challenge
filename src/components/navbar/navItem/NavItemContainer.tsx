@@ -27,13 +27,4 @@ export const StyledNavItemContainer = styled.div`
     line-height: 110%;
   }
 
-  @media (max-width: 1024px) {
-    p {
-      display: none;
-    }
-
-    .Button {
-      display: none;
-    }
-  }
 `;

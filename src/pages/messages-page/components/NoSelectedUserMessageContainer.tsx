@@ -1,13 +1,14 @@
 import styled from "styled-components";
 
-export const StyledChatMessagesContainer = styled.div`
+export const StyledNoSelectedUserMessageContainer = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     justify-items: center;
-    width: 100%;
+    width: 500px;
     height: 100%;
-    padding: 16px;
-    gap: 8px;
-`
+    max-width: 70%;
+    margin-left: auto;
+    margin-right: auto;
+`;
