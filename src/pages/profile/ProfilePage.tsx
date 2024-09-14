@@ -32,7 +32,7 @@ const ProfilePage = () => {
 
   const { t } = useTranslation();
   const queryClient = useQueryClient()
-  
+
   const addToast = useToastContext()
 
   const followingQuery = useQuery({
@@ -69,7 +69,7 @@ const ProfilePage = () => {
     mutationKey: ["deleteProfile"],
     mutationFn: () => service.deleteProfile(),
     onSuccess: () => {
-      addToast({message: t("toast.deleteProfile"), type: ToastType.ALERT, show: true})
+      addToast({ message: t("toast.deleteProfile"), type: ToastType.ALERT, show: true })
       navigate("/sign-in");
     }
   })
@@ -95,8 +95,8 @@ const ProfilePage = () => {
     }
   }, [userQuery.status, userQuery.data]);
 
-  useEffect(()=>{
-    setFollowing(followingQuery.data?.some((follow: Follow) =>  follow.followedId === profileDataQuery.data?.id))
+  useEffect(() => {
+    setFollowing(followingQuery.data?.some((follow: Follow) => follow.followedId === profileDataQuery.data?.id))
   }, [followingQuery.status, followingQuery.data])
 
   const handleButtonType = (): { component: ButtonType; text: string } => {
@@ -112,7 +112,7 @@ const ProfilePage = () => {
       deleteProfileMutation.mutate();
     } else {
       unfollowMutation.mutate({ id: profile!.id });
-      
+
       service.unfollowUser(profile!.id).then(async () => {
         setFollowing(false);
         setShowModal(false);
@@ -125,7 +125,7 @@ const ProfilePage = () => {
     if (profileDataQuery.status === 'success') {
       setProfile(profileDataQuery.data)
       setFollowing(
-        followingQuery.data?.some((follow: Follow) =>  follow.followedId === profileDataQuery.data?.id)
+        followingQuery.data?.some((follow: Follow) => follow.followedId === profileDataQuery.data?.id)
       );
     }
   }, [id, profileDataQuery.status, profileDataQuery.data]);
@@ -161,11 +161,11 @@ const ProfilePage = () => {
   const getProfileData = async () => {
     if (profileDataQuery.status === 'success') {
 
-      setProfile(profileDataQuery.data)
-      setFollowing(followingQuery.data?.some((follow: Follow) =>  follow.followedId === profileDataQuery.data?.id))
-    } 
+      setProfile({ ...profileDataQuery.data, private: !profileDataQuery.data.publicAccount })
+      setFollowing(followingQuery.data?.some((follow: Follow) => follow.followedId === profileDataQuery.data?.id))
+    }
     setProfile(profileDataQuery.data)
-    setFollowing(followingQuery.data?.some((follow: Follow) =>  follow.followedId === profileDataQuery.data?.id))
+    setFollowing(followingQuery.data?.some((follow: Follow) => follow.followedId === profileDataQuery.data?.id))
 
   };
 
@@ -202,10 +202,13 @@ const ProfilePage = () => {
               </StyledContainer>
             </StyledContainer>
             <StyledContainer width={"100%"}>
-              {profile.private ? (
+              {!profile.private || !following ? (
                 <ProfileFeed />
               ) : (
-                <StyledH5>Private account</StyledH5>
+                /*TODO Hacerle refactor para componente, y que le pases un textito*/
+                <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '80%' }}>
+                  <StyledH5>Private account</StyledH5>
+                </div>
               )}
             </StyledContainer>
             <Modal

@@ -18,5 +18,5 @@ export const useGetChatHistory = (userId: string) => {
         }
     }, [messagesQuery.data, messagesQuery.status]);
 
-    return {messages, loading: messagesQuery.isLoading, error: messagesQuery.isError}
+    return {messages, loading: messagesQuery.isLoading, error: messagesQuery.isError, refetch: messagesQuery.refetch}
 }

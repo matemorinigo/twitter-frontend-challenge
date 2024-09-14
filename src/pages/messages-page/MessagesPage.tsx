@@ -9,25 +9,9 @@ import NoSelectedUserMessage from './components/NoSelectedUserMessage'
 import io from 'socket.io-client'
 
 
-const socket = io('localhost:8080', {
-    auth: {
-        token: localStorage.getItem('token')
-    }
-})
-
-
-
 const MessagesPage = () => {
 
-
-    const [selectedUser, setSelectedUser] = React.useState<string | null>(null)
-
-    useEffect(() => {
-        console.log(selectedUser)
-    }, [selectedUser])
-
     return (
-        <StyledMessagesContainer>
             <StyledUsersFeedContainer>
                 <h1 style={{
                     color: 'black',
@@ -37,14 +21,18 @@ const MessagesPage = () => {
                     marginLeft: 'auto',
                     marginRight: 'auto'
                 }}>Messages</h1>
-                <UsersFeed setUserSelected={setSelectedUser} />
+                <UsersFeed />
             </StyledUsersFeedContainer>
-            <StyledUsersFeedContainer>
+    )
+}
+
+/*
+
+<StyledUsersFeedContainer>
                     {!selectedUser && <NoSelectedUserMessage/>}
                     {selectedUser && <ChatMessages userId={selectedUser} socket={socket} />}
             </StyledUsersFeedContainer>
-        </StyledMessagesContainer>
-    )
-}
+
+*/ 
 
 export default MessagesPage

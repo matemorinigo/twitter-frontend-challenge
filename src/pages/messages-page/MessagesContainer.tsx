@@ -6,7 +6,7 @@ export const StyledMessagesContainer = styled.div`
     align-items: flex-start;
     justify-content: flex-start;
     justify-items: between;
-    width: 200%;
+    width: 100%;
     height: 100%;
     max-width: 55%;
 `
