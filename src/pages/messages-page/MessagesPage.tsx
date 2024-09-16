@@ -1,12 +1,5 @@
-import React, { useEffect } from 'react'
-import { StyledContentContainer } from '../home-page/components/contentContainer/StyledContentContainer'
-import { StyledFeedContainer } from '../home-page/components/contentContainer/FeedContainer'
-import { StyledMessagesContainer } from './MessagesContainer'
 import UsersFeed from './components/UsersFeed'
-import ChatMessages from './components/ChatMessages'
 import { StyledUsersFeedContainer } from './components/StyledUsersFeedContainer'
-import NoSelectedUserMessage from './components/NoSelectedUserMessage'
-import io from 'socket.io-client'
 
 
 const MessagesPage = () => {
@@ -25,14 +18,5 @@ const MessagesPage = () => {
             </StyledUsersFeedContainer>
     )
 }
-
-/*
-
-<StyledUsersFeedContainer>
-                    {!selectedUser && <NoSelectedUserMessage/>}
-                    {selectedUser && <ChatMessages userId={selectedUser} socket={socket} />}
-            </StyledUsersFeedContainer>
-
-*/ 
 
 export default MessagesPage

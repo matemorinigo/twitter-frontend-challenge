@@ -1,6 +1,6 @@
 import {describe} from "node:test";
 
-describe('Jest works', () => {
+describe('Button component', () => {
 
     test('asserts true to be true', () => {
         expect(true).toBe(true)

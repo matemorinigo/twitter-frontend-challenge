@@ -21,12 +21,13 @@ const StyledLoaderSpinner = styled.div`
   border: 4px solid #ccc;
   border-top-color: ${({ theme }) => theme.colors.main};
   animation: ${spinAnimation} 0.8s linear infinite;
+  
 `;
 
 const Loader = () => {
   return (
     <StyledLoaderContainer>
-      <StyledLoaderSpinner />
+      <StyledLoaderSpinner data-testid="loader-spinner" />
     </StyledLoaderContainer>
   );
 };
