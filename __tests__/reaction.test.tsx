@@ -31,3 +31,5 @@ describe('Reaction', ()=>{
         expect(mockedReactionHandler).toBeCalled();
     })
 })
+
+console.log('run tests by cicd')
