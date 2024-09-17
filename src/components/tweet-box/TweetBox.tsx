@@ -97,7 +97,7 @@ const TweetBox = ({parentId, close, mobile}: TweetBoxProps) => {
         if(e.target.value.length === 240){
             addToast({message: t("toast.maxChar"), type: ToastType.ALERT, show: true})
         }
-        setContent(e.target.value);
+        if(e.target.value.length <= 240){setContent(e.target.value);}
     };
     
     const handleSubmitImages = async (files: File[]): Promise<string[]> => {

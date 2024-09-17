@@ -13,7 +13,6 @@ import { I18nextProvider } from 'react-i18next'
 
 
 beforeEach(() => {
-  // IntersectionObserver isn't available in test environment
   const mockIntersectionObserver = jest.fn();
   mockIntersectionObserver.mockReturnValue({
     observe: () => null,
@@ -63,11 +62,6 @@ describe('Feed', () => {
           </ThemeProvider>
         </Provider>
       </I18nextProvider>
-
-
-
-
-
     )
 
 

@@ -33,7 +33,7 @@ jest.mock('@tanstack/react-query', () => ({
     }),
 }));
 
-describe('FollowUserBox', () => {
+describe('Follow user box', () => {
     const mockGetFollowing = jest.fn();
     const mockFollowUser = jest.fn();
     const mockUnfollowUser = jest.fn();
