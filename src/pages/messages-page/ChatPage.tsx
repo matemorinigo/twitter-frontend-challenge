@@ -7,7 +7,8 @@ import { useParams } from 'react-router-dom'
 const socket = io(process.env.REACT_APP_SOCKET_IO_URL ? process.env.REACT_APP_SOCKET_IO_URL : '', {
     auth: {
         token: localStorage.getItem('token')
-    }
+    },
+    transports: ['websocket'],
 })
 
 const ChatPage = () => {
