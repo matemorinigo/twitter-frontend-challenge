@@ -21,6 +21,7 @@ export const useGetProfilePosts = () => {
   useEffect(() => {
     if (!id) return;
     if (postsFromProfileQuery.status === "success") {
+      console.log(posts)
       const combinedPosts = Array.from(new Set([...posts, ...postsFromProfileQuery.data]))
       const updatedPosts = combinedPosts.filter((post) => post.authorId === id);
       dispatch(updateFeed(updatedPosts));
