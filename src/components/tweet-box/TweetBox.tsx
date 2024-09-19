@@ -104,11 +104,12 @@ const TweetBox = ({parentId, close, mobile}: TweetBoxProps) => {
         const imagesUrls: string[] = []
 
         for(const file of files){
-            service.addImage(file.type).then(async (res) => {
-                await service.putImage(file, res.putObjectUrl)
-                imagesUrls.push(res.objectUrl)
-            })
+            const res = await service.addImage(file.type)
+            await service.putImage(file, res.putObjectUrl)
+            imagesUrls.push(res.objectUrl)
         }
+
+        console.log(imagesUrls)
 
         return imagesUrls;
     }

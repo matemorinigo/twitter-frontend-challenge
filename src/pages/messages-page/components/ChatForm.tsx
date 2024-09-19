@@ -9,11 +9,11 @@ import { useHttpRequestService } from '../../../service/HttpRequestService'
 import user from '../../../redux/user'
 
 interface ChatFormProps {
-    receiverId: string, 
+    receiverId: string,
     socket: Socket
 }
 
-const ChatForm = ({receiverId, socket}: ChatFormProps) => {
+const ChatForm = ({ receiverId, socket }: ChatFormProps) => {
     const [room, setRoom] = useState<string | null>(null)
 
     const initialValues = {
@@ -22,51 +22,54 @@ const ChatForm = ({receiverId, socket}: ChatFormProps) => {
 
     const service = useHttpRequestService();
     const queryClient = useQueryClient();
-    
-    socket.on('message:receive', ()=>{
+
+    socket.on('message:receive', () => {
         queryClient.invalidateQueries({
             queryKey: ['chat']
         })
     })
-    
+
 
     const userQuery = useQuery({
-      queryKey: ["me"],
-      queryFn: () => service.me()
+        queryKey: ["me"],
+        queryFn: () => service.me()
     })
 
 
-    useEffect(()=> {
-        if(userQuery.status === 'success') {
+    useEffect(() => {
+        if (userQuery.status === 'success') {
             setRoom(`${userQuery.data.id}-${receiverId}`)
         }
     }, [userQuery.status, userQuery.data])
-    
+
 
     return (
         <Formik initialValues={initialValues} validate={(values) => {
-            const errors: Partial<{message: string}> = {};
+            if (values.message.length === 0) {
+            }
+            const errors: Partial<{ message: string }> = {};
             return errors
         }} onSubmit={async (values, { resetForm, setErrors, setSubmitting }) => {
-            if(room) {
-                socket.emit('message:send', receiverId, {message: values.message})
-                socket.once('message:sent', ()=>{
-                    queryClient.invalidateQueries({
-                        queryKey: ['chat']
-                        
+            if (values.message.length !== 0) {
+                if (room) {
+                    socket.emit('message:send', receiverId, { message: values.message })
+                    socket.once('message:sent', () => {
+                        queryClient.invalidateQueries({
+                            queryKey: ['chat']
+
+                        })
+                        setSubmitting(false)
+                        resetForm()
                     })
-                    setSubmitting(false)
-                    resetForm()
-                })
-            } else {
-                setErrors({message: 'Error sending message'})
+                } else {
+                    setErrors({ message: 'Error sending message' })
+                }
             }
-            
         }} >
-            <Form style={{width: '94%', justifyContent: 'center'}}>
-                <StyledChatFormContainer> 
-                    <Field style={{width: '100%'}} id='message' name='message' autocomplete='off'/>
-                    <Button text='Send' size='small' buttonType={ButtonType.OUTLINED} type='submit'/>
+            <Form style={{ width: '94%', justifyContent: 'center' }}>
+                <StyledChatFormContainer>
+                    <Field style={{ width: '100%' }} id='message' name='message' autocomplete='off' />
+                    <Button text='Send' size='small' buttonType={ButtonType.OUTLINED} type='submit' />
                 </StyledChatFormContainer>
             </Form>
         </Formik>

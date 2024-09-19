@@ -285,19 +285,21 @@ const httpRequestService = {
     }
   },
   putImage: async (file: File, putObjectUrl: string) => {
+    const axiosInstance = axios.create();
+    const blob = new Blob([file], { type: file.type });
 
-    const res = await axios.put(putObjectUrl, file, { headers: { "Content-Type": file.type } });
+    const res = await axiosInstance.put(putObjectUrl, blob, { headers: { "Content-Type": file.type } });
 
     if (res.status === 200) {
       return res.data;
     }
-
   },
   addImage: async (fileType: string) => {
     const res = await axios.post(`${url}/post/add_media`, {
       fileType
     });
-    if (res.status === 200) {
+    if (res.status === 201) {
+  
       return res.data;
     }
   },
