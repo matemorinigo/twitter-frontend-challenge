@@ -12,6 +12,7 @@ import PostPage from "../../pages/post-page/PostPage";
 import ProtectedRoutes from "../protected-routes/ProtectedRoutes";
 import MessagesPage from "../../pages/messages-page/MessagesPage";
 import ChatPage from "../../pages/messages-page/ChatPage";
+import NotFoundPage from "../../pages/NotFound/NotFoundPage";
 
 const WithNav = () => {
   return (
@@ -65,9 +66,10 @@ export const ROUTER = createBrowserRouter([
           {
             path: "/messages/:id",
             element: <ChatPage/>
-          }
+          },
         ],
       },
-    ]
+    ],
+    errorElement: <NotFoundPage />,
   }
 ]);

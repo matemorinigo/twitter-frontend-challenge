@@ -109,8 +109,6 @@ const TweetBox = ({parentId, close, mobile}: TweetBoxProps) => {
             imagesUrls.push(res.objectUrl)
         }
 
-        console.log(imagesUrls)
-
         return imagesUrls;
     }
 

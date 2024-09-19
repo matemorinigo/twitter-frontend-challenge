@@ -23,7 +23,7 @@ axios.interceptors.response.use((response)=>{
 
 const httpRequestService = {
   signUp: async (data: Partial<SingUpData>) => {
-    console.log(data)
+    
     const res = await axios.post(`${url}/auth/signup`, data);
     if (res.status === 201) {
       localStorage.setItem("token", `Bearer ${res.data.token}`);
